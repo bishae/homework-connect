@@ -13,6 +13,7 @@ import {
 	SignUpButton,
 	UserButton,
 } from "@clerk/nextjs";
+import Link from "next/link";
 
 export const metadata: Metadata = {
 	title: "Homework Connect",
@@ -39,8 +40,13 @@ export default function RootLayout({
 								<SignUpButton />
 							</SignedOut>
 							<SignedIn>
-								<OrganizationSwitcher />
-								<UserButton />
+								<div className="flex w-full items-center justify-between">
+									<OrganizationSwitcher />
+									<ul className="ml-5 flex grow">
+										<Link href="/subjects">Subjects</Link>
+									</ul>
+									<UserButton />
+								</div>
 							</SignedIn>
 						</header>
 						{children}
