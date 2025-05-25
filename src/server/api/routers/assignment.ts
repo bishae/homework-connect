@@ -19,6 +19,17 @@ export const assignmentRouter = createTRPCRouter({
 			where: (assignment, { eq }) => eq(assignment.owner, orgId),
 		});
 	}),
+	getById: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.query(async ({ ctx, input }) => {
+			const entity = await ctx.db.query.assignments.findFirst({
+				with: {
+					subject: true,
+				},
+				where: (assignment, { eq }) => eq(assignment.id, input.id),
+			});
+			return entity;
+		}),
 	create: protectedProcedure
 		.input(z.object({ name: z.string().min(1), subjectId: z.number() }))
 		.mutation(async ({ ctx, input }) => {

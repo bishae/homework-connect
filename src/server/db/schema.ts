@@ -12,10 +12,33 @@ import { index, pgTableCreator, unique } from "drizzle-orm/pg-core";
  */
 export const createTable = pgTableCreator((name) => `${name}`);
 
+export const users = createTable(
+	"users",
+	(d) => ({
+		id: d.serial("id").primaryKey(),
+		firstName: d.varchar({ length: 256 }),
+		lastName: d.varchar({ length: 256 }),
+		imageUrl: d.varchar({ length: 256 }),
+		email: d.varchar({ length: 256 }),
+		phone: d.varchar({ length: 256 }),
+		externalId: d.varchar({ length: 256 }),
+		createdAt: d
+			.timestamp({ withTimezone: true })
+			.default(sql`CURRENT_TIMESTAMP`)
+			.notNull(),
+		updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+	}),
+	(t) => [unique("user_external_id_idx").on(t.externalId)],
+);
+
+export const usersRelations = relations(users, ({ many }) => ({
+	submissions: many(submissions),
+}));
+
 export const posts = createTable(
 	"posts",
 	(d) => ({
-		id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+		id: d.serial("id").primaryKey(),
 		name: d.varchar({ length: 256 }),
 		owner: d.varchar({ length: 256 }),
 		createdAt: d
@@ -30,7 +53,7 @@ export const posts = createTable(
 export const subjects = createTable(
 	"subjects",
 	(d) => ({
-		id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+		id: d.serial("id").primaryKey(),
 		name: d.varchar({ length: 256 }),
 		owner: d.varchar({ length: 256 }),
 		createdAt: d
@@ -49,7 +72,7 @@ export const subjectsRelations = relations(subjects, ({ many }) => ({
 export const assignments = createTable(
 	"assignments",
 	(d) => ({
-		id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+		id: d.serial("id").primaryKey(),
 		name: d.varchar({ length: 256 }),
 		subjectId: d.integer().references(() => subjects.id),
 		owner: d.varchar({ length: 256 }),
@@ -73,9 +96,9 @@ export const assignmentsRelations = relations(assignments, ({ one, many }) => ({
 export const submissions = createTable(
 	"submissions",
 	(d) => ({
-		id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+		id: d.serial("id").primaryKey(),
 		assignmentId: d.integer().references(() => assignments.id),
-		studentId: d.varchar({ length: 256 }),
+		studentId: d.integer().references(() => users.id),
 		createdAt: d
 			.timestamp({ withTimezone: true })
 			.default(sql`CURRENT_TIMESTAMP`)
@@ -89,5 +112,9 @@ export const submissionsRelations = relations(submissions, ({ one }) => ({
 	assignment: one(assignments, {
 		fields: [submissions.assignmentId],
 		references: [assignments.id],
+	}),
+	student: one(users, {
+		fields: [submissions.studentId],
+		references: [users.id],
 	}),
 }));

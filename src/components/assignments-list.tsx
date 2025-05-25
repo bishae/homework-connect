@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/react";
+import Link from "next/link";
 
 export function AssignmentsList() {
 	const { data, isLoading, error } = api.assignment.getAll.useQuery();
@@ -14,9 +15,9 @@ export function AssignmentsList() {
 	return (
 		<div>
 			{data.map((assignment) => (
-				<div key={assignment.id}>
+				<Link key={assignment.id} href={`/assignments/${assignment.id}`}>
 					{assignment.name} - {assignment.subject?.name}
-				</div>
+				</Link>
 			))}
 		</div>
 	);

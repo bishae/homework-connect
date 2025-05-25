@@ -45,6 +45,7 @@ export default function RootLayout({
 									<ul className="ml-5 flex grow gap-5">
 										<Link href="/assignments">Assignments</Link>
 										<Link href="/subjects">Subjects</Link>
+										<Link href="/submissions">Submissions</Link>
 									</ul>
 									<UserButton />
 								</div>
