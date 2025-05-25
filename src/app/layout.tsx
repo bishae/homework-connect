@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 import {
 	ClerkProvider,
+	OrganizationSwitcher,
 	SignedIn,
 	SignedOut,
 	SignInButton,
@@ -38,6 +39,7 @@ export default function RootLayout({
 								<SignUpButton />
 							</SignedOut>
 							<SignedIn>
+								<OrganizationSwitcher />
 								<UserButton />
 							</SignedIn>
 						</header>
