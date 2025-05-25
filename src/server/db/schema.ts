@@ -17,6 +17,7 @@ export const posts = createTable(
 	(d) => ({
 		id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
 		name: d.varchar({ length: 256 }),
+		owner: d.varchar({ length: 256 }),
 		createdAt: d
 			.timestamp({ withTimezone: true })
 			.default(sql`CURRENT_TIMESTAMP`)
