@@ -10,10 +10,10 @@ import { submissionRouter } from "./routers/submission";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-	assignmentRouter,
+	assignment: assignmentRouter,
 	post: postRouter,
 	subject: subjectRouter,
-	submissionRouter,
+	submission: submissionRouter,
 });
 
 // export type definition of API

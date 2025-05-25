@@ -63,7 +63,7 @@ export const assignments = createTable(
 );
 
 export const assignmentsRelations = relations(assignments, ({ one, many }) => ({
-	subjects: one(subjects, {
+	subject: one(subjects, {
 		fields: [assignments.subjectId],
 		references: [subjects.id],
 	}),

@@ -42,7 +42,8 @@ export default function RootLayout({
 							<SignedIn>
 								<div className="flex w-full items-center justify-between">
 									<OrganizationSwitcher />
-									<ul className="ml-5 flex grow">
+									<ul className="ml-5 flex grow gap-5">
+										<Link href="/assignments">Assignments</Link>
 										<Link href="/subjects">Subjects</Link>
 									</ul>
 									<UserButton />

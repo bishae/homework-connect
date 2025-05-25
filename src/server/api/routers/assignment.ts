@@ -4,6 +4,21 @@ import z from "zod";
 import { TRPCError } from "@trpc/server";
 
 export const assignmentRouter = createTRPCRouter({
+	getAll: protectedProcedure.query(async ({ ctx }) => {
+		const orgId = ctx.auth.orgId;
+		if (!orgId)
+			throw new TRPCError({
+				code: "UNAUTHORIZED",
+				message: "You must be in an organization to access this resource.",
+			});
+
+		return await ctx.db.query.assignments.findMany({
+			with: {
+				subject: true,
+			},
+			where: (assignment, { eq }) => eq(assignment.owner, orgId),
+		});
+	}),
 	create: protectedProcedure
 		.input(z.object({ name: z.string().min(1), subjectId: z.number() }))
 		.mutation(async ({ ctx, input }) => {
@@ -19,6 +34,7 @@ export const assignmentRouter = createTRPCRouter({
 				.insert(assignments)
 				.values({
 					name: input.name,
+					subjectId: input.subjectId,
 					owner: orgId,
 				})
 				.returning();
