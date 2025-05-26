@@ -30,7 +30,7 @@ const geist = Geist({
 export default async function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
-	const { orgId } = await auth();
+	const { orgId, has } = await auth();
 
 	return (
 		<ClerkProvider>
@@ -49,8 +49,13 @@ export default async function RootLayout({
 										{orgId && (
 											<>
 												<Link href="/assignments">Assignments</Link>
-												<Link href="/subjects">Subjects</Link>
-												<Link href="/submissions">Submissions</Link>
+												{(has({ role: "admin" }) ||
+													has({ role: "teacher" })) && (
+													<>
+														<Link href="/subjects">Subjects</Link>
+														<Link href="/submissions">Submissions</Link>
+													</>
+												)}
 											</>
 										)}
 									</ul>
