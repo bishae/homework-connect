@@ -14,6 +14,9 @@ import {
 	UserButton,
 } from "@clerk/nextjs";
 import Link from "next/link";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
+import { AppSidebar } from "@/components/app-sidebar";
 import { auth } from "@clerk/nextjs/server";
 
 export const metadata: Metadata = {
@@ -37,7 +40,7 @@ export default async function RootLayout({
 			<html lang="en" className={`${geist.variable}`}>
 				<body>
 					<TRPCReactProvider>
-						<header className="flex h-16 items-center justify-end gap-4 p-4">
+						{/* <header className="flex h-16 items-center justify-end gap-4 p-4">
 							<SignedOut>
 								<SignInButton />
 								<SignUpButton />
@@ -62,8 +65,14 @@ export default async function RootLayout({
 									<UserButton />
 								</div>
 							</SignedIn>
-						</header>
-						{children}
+						</header> */}
+						<SidebarProvider>
+							<div className="flex min-h-screen">
+								<AppSidebar />
+								<main className="flex-1">{children}</main>
+							</div>
+							<Toaster />
+						</SidebarProvider>
 					</TRPCReactProvider>
 				</body>
 			</html>
