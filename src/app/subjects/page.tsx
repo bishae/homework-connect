@@ -1,8 +1,13 @@
 import { SubjectForm } from "@/components/subject-form";
 import { SubjectsList } from "@/components/subjects-list";
-import { api } from "@/trpc/server";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function Subjects() {
+	const { orgId } = await auth();
+
+	if (!orgId) return redirect("/");
+
 	return (
 		<main>
 			<SubjectForm />

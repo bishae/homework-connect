@@ -14,6 +14,7 @@ import {
 	UserButton,
 } from "@clerk/nextjs";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 export const metadata: Metadata = {
 	title: "Homework Connect",
@@ -26,9 +27,11 @@ const geist = Geist({
 	variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
+	const { orgId } = await auth();
+
 	return (
 		<ClerkProvider>
 			<html lang="en" className={`${geist.variable}`}>
@@ -43,9 +46,13 @@ export default function RootLayout({
 								<div className="flex w-full items-center justify-between">
 									<OrganizationSwitcher />
 									<ul className="ml-5 flex grow gap-5">
-										<Link href="/assignments">Assignments</Link>
-										<Link href="/subjects">Subjects</Link>
-										<Link href="/submissions">Submissions</Link>
+										{orgId && (
+											<>
+												<Link href="/assignments">Assignments</Link>
+												<Link href="/subjects">Subjects</Link>
+												<Link href="/submissions">Submissions</Link>
+											</>
+										)}
 									</ul>
 									<UserButton />
 								</div>

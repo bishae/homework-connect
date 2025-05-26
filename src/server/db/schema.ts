@@ -33,8 +33,57 @@ export const users = createTable(
 
 export const usersRelations = relations(users, ({ many }) => ({
 	submissions: many(submissions),
+	memberships: many(organizationMemberships),
 }));
 
+export const organizations = createTable(
+	"organizations",
+	(d) => ({
+		id: d.serial("id").primaryKey(),
+		name: d.varchar({ length: 256 }),
+		slug: d.varchar({ length: 256 }),
+		imageUrl: d.varchar({ length: 256 }),
+		externalId: d.varchar({ length: 256 }),
+		createdAt: d
+			.timestamp({ withTimezone: true })
+			.default(sql`CURRENT_TIMESTAMP`)
+			.notNull(),
+		updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+	}),
+	(t) => [
+		unique("organization_external_id_idx").on(t.externalId),
+		unique("organization_slug_idx").on(t.slug),
+	],
+);
+
+export const organizationsRelations = relations(organizations, ({ many }) => ({
+	organizationMemberships: many(organizationMemberships),
+}));
+
+export const organizationMemberships = createTable(
+	"organization_memberships",
+	(d) => ({
+		id: d.serial("id").primaryKey(),
+		userId: d.integer().references(() => users.id),
+		organizationId: d.integer().references(() => organizations.id),
+		role: d.varchar({ length: 256 }),
+	}),
+	(t) => [unique("user_organization_idx").on(t.userId, t.organizationId)],
+);
+
+export const organizationMembershipsRelations = relations(
+	organizationMemberships,
+	({ one }) => ({
+		user: one(users, {
+			fields: [organizationMemberships.userId],
+			references: [users.id],
+		}),
+		organization: one(organizations, {
+			fields: [organizationMemberships.organizationId],
+			references: [organizations.id],
+		}),
+	}),
+);
 export const posts = createTable(
 	"posts",
 	(d) => ({
@@ -67,7 +116,32 @@ export const subjects = createTable(
 
 export const subjectsRelations = relations(subjects, ({ many }) => ({
 	assignments: many(assignments),
+	studentSubjects: many(studentSubjects),
 }));
+
+export const studentSubjects = createTable(
+	"student_subjects",
+	(d) => ({
+		id: d.serial("id").primaryKey(),
+		studentId: d.integer().references(() => users.id),
+		subjectId: d.integer().references(() => subjects.id),
+	}),
+	(t) => [unique().on(t.studentId, t.subjectId)],
+);
+
+export const studentSubjectsRelations = relations(
+	studentSubjects,
+	({ one }) => ({
+		student: one(users, {
+			fields: [studentSubjects.studentId],
+			references: [users.id],
+		}),
+		subject: one(subjects, {
+			fields: [studentSubjects.subjectId],
+			references: [subjects.id],
+		}),
+	}),
+);
 
 export const assignments = createTable(
 	"assignments",
